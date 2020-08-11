@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chart.js</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script>
+	
+
+	<style type="text/css">
+		
+		#titulo_tabela{
+			width: 100%;
+			text-align: center;
+			font-size: 25px;
+			color: #555;
+			font-weight: bold;
+			border: none;
+		}
+
+		#titulo_tabela:focus{
+			outline: none;
+		}
+
+		.custom-input{
+			background: none;
+			border: none;
+			color: #fff;
+			text-align: center;
+		}
+
+		.custom-input:focus{
+			outline: none;
+		}
+
+		.input-body{
+			color: #333;
+		}
+
+		#button-plus{
+			background-color: #00cc00;
+			text-align: center;
+			border-radius: 50px;
+			height: 30px;
+			width: 30px;
+			font-weight: bold;
+			border: 1px solid #0a0;
+			box-shadow: 1px 1px 2px #060;
+		}
+
+		#button-plus:focus{
+			outline: none;
+		}
+
+		#button-plus:hover{
+			cursor: pointer;
+			background-color: #0a0;
+		}
+
+		#button-plus:active{
+			box-shadow: 0px 0px 1px #030;
+		}
+
+		.btn-round{
+			border-radius: 50px;
+			width: 30px;
+			height: 30px;
+		}
+
+		#header{
+			padding-top: 30px;
+			padding-bottom: 50px;
+			background-color: #054f77;
+			width: 100%;
+			height: 100px;
+			color: white;
+			font-family: Times New Roman;
+		}
+
+		.thead-custom{
+			background-color: #4169e1 !important;
+		}
+
+	</style>
+
+</head>
+
+
+
+<body>
+
+	<header>
+		<div align="center" id="header">
+			<h1>Gerador de gráficos</h1>
+		</div>
+	</header>
+
+<div class="container">
+
+	<div class="row">
+
+		<div class="col-lg-6">
+			<div align="center"><input type="text" name="titulo_tabela" placeholder="Editar Título..." id="titulo_tabela"></div>
+
+			<table class="table table-hover table-sm table-striped">
+				<thead class="thead-custom">
+					<th></th>
+					<th><input class="custom-input" type="text" name="col1" id="col1" placeholder="Coluna 1"></th>
+					<th><input class="custom-input" type="text" name="col2" id="col2" placeholder="Coluna 2"></th>
+				</thead>
+
+				<tbody id="table-body">
+
+				</tbody>
+			</table>
+
+			<div align="center"><button id="button-plus">+</button></div>
+		</div>
+
+
+		<div class="col-lg-6">
+			<canvas id="myChart" width="400" height="400"></canvas>
+		</div>
+	</div>
+
+		
+</div>
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+var myChart;
+
+
+
+
+$(document).ready(function(){
+	criarGrafico()
+	criaLinhaTabela()
+})
+
+$("#button-plus").on('click', function(){
+	criaLinhaTabela()
+})
+
+$("#titulo_tabela").on('keyup', function(){
+	myChart.options.title.text = $(this).val();
+	myChart.update();
+})
+
+document.addEventListener('keydown', function(e){
+	if(e.key == "Enter") criaLinhaTabela();
+})
+
+function criaLinhaTabela(){
+	let linhas = $(".linha_tabela").length
+
+	$("#table-body").append(`
+		<tr class="linha_tabela">
+			<th class="th_linha_tabela">${linhas + 1}</th>
+			<td><input class="custom-input input-body input-1" onkeyup="edt_coluna1(event)" data-reference="${linhas}" type="text" placeholder="Editar..."></td>
+			<td><input class="custom-input input-body input-2" onkeyup="edt_coluna2(event)" data-reference="${linhas}" type="number" placeholder="Editar...">
+				<button type="button" onclick="apaga(event)" class="btn btn-danger btn-sm btn-round input-3" data-reference="${linhas}">-</button>
+			</td>
+		</tr>
+	`)
+
+	myChart.data.labels.push('')
+	myChart.data.datasets[0].data.push('')
+	myChart.data.datasets[0].backgroundColor.push(backgroundColor(linhas))
+	myChart.data.datasets[0].borderColor.push(borderColor(linhas))
+	myChart.update()
+}
+
+function backgroundColor(index){
+	var backgroundColor = ['rgba(255, 99, 132, 0.2)','rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)'];
+	return backgroundColor[index%(backgroundColor.length)]
+}
+
+function borderColor(index){
+	var borderColor = ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)'];
+	return borderColor[index%(borderColor.length)]
+}
+
+function apaga(event){
+	let linha = event.target.dataset.reference;
+
+	$(".linha_tabela")[linha].remove()
+	myChart.data.labels.splice(linha, 1);
+	myChart.data.datasets[0].data.splice(linha, 1);
+	myChart.data.datasets[0].backgroundColor.splice(linha, 1);
+	myChart.data.datasets[0].borderColor.splice(linha, 1);
+
+	reordena(linha)
+	myChart.update()
+}
+
+function reordena(pos){
+	for(let i = pos; i < myChart.data.labels.length; i++){
+		myChart.data.datasets[0].backgroundColor[i] = backgroundColor(i)
+		myChart.data.datasets[0].borderColor[i] = borderColor(i)
+		$(".th_linha_tabela")[i].innerHTML = parseInt(i)+1
+		$(".input-1")[i].dataset.reference -= 1;
+		$(".input-2")[i].dataset.reference -=1;
+		$(".input-3")[i].dataset.reference -=1;
+	}
+}
+
+function edt_coluna1(event){
+	console.log(myChart.data.labels)
+	let coluna = event.target.value;
+	let posicao = event.target.dataset.reference;
+	myChart.data.labels[posicao] = coluna;
+	myChart.update();
+}
+
+function edt_coluna2(event){
+	let coluna = event.target.value;
+	let posicao = event.target.dataset.reference;
+	myChart.data.datasets[0].data[posicao] = coluna;
+	myChart.update();
+}
+
+function criarGrafico() {
+	var ctx = document.getElementById('myChart').getContext('2d');
+	myChart = new Chart(ctx, {
+	    type: 'bar',
+	    data: {
+	        labels: [],
+	        datasets: [{
+	            label: '',
+	            data: [],
+	            backgroundColor: [],
+	            borderColor: [],
+	            borderWidth: 1
+	        }]
+	    },
+	    options: {
+	    	title: {
+            	display: true,
+            	text: 'Título do Gráfico'
+        	},
+	        scales: {
+	            yAxes: [{
+	                ticks: {
+	                    beginAtZero: true
+	                }
+	            }]
+	        }
+	    }
+	});
+}
+
+
+</script>
+
+
+</body>
+
+</html>
