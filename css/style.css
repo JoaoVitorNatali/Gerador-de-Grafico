@@ -1,0 +1,60 @@
+#titulo_tabela{
+    width: 100%;
+    text-align: center;
+    font-size: 25px;
+    color: #555;
+    font-weight: bold;
+    border: none;
+}
+
+#titulo_tabela:focus{
+    outline: none;
+}
+
+.custom-input{
+    background: none;
+    border: none;
+    color: #fff;
+    text-align: center;
+}
+
+.custom-input:focus{
+    outline: none;
+}
+
+.input-body{
+    color: #333;
+}
+
+#button-plus{
+    color: green;
+}
+
+#button-plus:hover{
+    cursor: pointer;
+}
+
+.btn-round{
+    border-radius: 50px;
+    width: 30px;
+    height: 30px;
+}
+
+#header{
+    padding-top: 30px;
+    padding-bottom: 50px;
+    background-color: #054f77;
+    width: 100%;
+    height: 100px;
+    color: white;
+    font-family: Times New Roman;
+}
+
+#thead-custom{
+    background-color: #cacaf6 !important;
+}
+
+.fa-custom{
+    color: red !important;
+    cursor: pointer;
+}
