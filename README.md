@@ -1,6 +1,6 @@
 # Gerador de Grafico
 
-O objetivo desse programa é gerar um gráfico de forma dinâmica, conforme o usuário edita a tabela disposta nele.
+O objetivo desse programa é gerar um gráfico de forma dinâmica, conforme o usuário edita a tabela disposta no site.
 
 # Frameworks utilizados
 
